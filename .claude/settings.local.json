@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if exist .nextdevlock del /f /q .nextdevlock)",
+      "Bash(npm run dev:*)",
+      "Bash(del /f /q \"c:\\\\Users\\\\moham\\\\OneDrive\\\\Bureau\\\\Web Vitrine\\\\KIC_FORMATION\\\\.next\\\\dev\\\\lock\")",
+      "Bash(find:*)",
+      "WebFetch(domain:www.kic-formations.ch)",
+      "Bash(powershell -Command:*)"
+    ]
+  }
+}

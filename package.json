@@ -1,0 +1,34 @@
+{
+  "name": "kic-formations",
+  "version": "1.0.0",
+  "description": "Site web KIC-FORMATIONS - Centre de formation continue à Genève",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [
+    "formation",
+    "genève",
+    "education"
+  ],
+  "author": "KIC-FORMATIONS",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^25.0.6",
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
+    "next": "^16.1.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "resend": "^6.9.2",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
+  }
+}
