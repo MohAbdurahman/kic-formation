@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
@@ -115,7 +115,7 @@ const formationCategories = [
   },
 ];
 
-export default function FormationsPage() {
+function FormationsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('categorie');
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(categoryParam);
@@ -395,20 +395,22 @@ export default function FormationsPage() {
                     <div className="space-y-6">
                       {selectedCategory.id === 'langues' ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {selectedCategory.subCategories.map((subCat, subIndex) => (
+                          {selectedCategory.subCategories.map((subCat, subIndex) => {
+                            const sc = subCat as { name: string; color?: string; dotColor?: string; formations: { name: string; description: string; slug: string }[] };
+                            return (
                             <div key={subIndex} className="bg-white rounded-xl p-6 border-2 border-gray-100">
-                              <h3 className={`text-xl font-heading font-bold mb-4 flex items-center gap-2 ${subCat.color}`}>
-                                <span className={`w-3 h-3 rounded-full ${subCat.dotColor}`}></span>
-                                {subCat.name}
+                              <h3 className={`text-xl font-heading font-bold mb-4 flex items-center gap-2 ${sc.color ?? ''}`}>
+                                <span className={`w-3 h-3 rounded-full ${sc.dotColor ?? 'bg-gray-400'}`}></span>
+                                {sc.name}
                               </h3>
                               <div className="space-y-3">
-                                {subCat.formations.map((formation, formIndex) => (
+                                {sc.formations.map((formation, formIndex) => (
                                   <Link
                                     key={formIndex}
                                     href={`/formations/${formation.slug}`}
                                     className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer block"
                                   >
-                                    <div className={`w-2 h-2 rounded-full ${subCat.dotColor} flex-shrink-0 mt-2`}></div>
+                                    <div className={`w-2 h-2 rounded-full ${sc.dotColor ?? 'bg-gray-400'} flex-shrink-0 mt-2`}></div>
                                     <div className="flex-1">
                                       <h4 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
                                         {formation.name}
@@ -424,7 +426,7 @@ export default function FormationsPage() {
                                 ))}
                               </div>
                             </div>
-                          ))}
+                          );})}
                         </div>
                       ) : (
                         <div className="space-y-6">
@@ -531,5 +533,13 @@ export default function FormationsPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function FormationsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full" /></div>}>
+      <FormationsContent />
+    </Suspense>
   );
 }

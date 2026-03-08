@@ -188,7 +188,7 @@ export default function AdminContactPage() {
                   <label className="block text-xs text-gray-500 mb-1">{label}</label>
                   <input
                     type="url"
-                    value={(data as Record<string, string>)[key]}
+                    value={(data as unknown as Record<string, string>)[key]}
                     onChange={e => setData({ ...data, [key]: e.target.value })}
                     className={cls}
                     placeholder={`https://${label.toLowerCase()}.com/...`}
