@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
+import { getData, saveKicData } from '@/lib/db';
 
 interface Value {
   id: string;
@@ -109,19 +110,21 @@ export default function AdminAProposPage() {
   const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_about');
-    if (saved) {
-      try { setAboutData({ ...defaultAboutData, ...JSON.parse(saved) }); } catch {}
-    }
+    getData<AboutData>('about', defaultAboutData).then(saved => {
+      setAboutData({ ...defaultAboutData, ...saved });
+    });
   }, []);
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
   const saveData = async () => {
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    localStorage.setItem('kic_about', JSON.stringify(aboutData));
-    setSaveMessage('Modifications enregistrées !');
+    try {
+      await saveKicData('about', aboutData);
+      setSaveMessage('Modifications enregistrées !');
+    } catch {
+      setSaveMessage('Erreur lors de la sauvegarde');
+    }
     setIsSaving(false);
     setTimeout(() => setSaveMessage(''), 3000);
   };

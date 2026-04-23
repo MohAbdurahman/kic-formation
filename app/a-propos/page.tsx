@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { getData } from '@/lib/db';
 
 interface TeamMember {
   id: string;
@@ -64,17 +65,13 @@ export default function AProposPage() {
   const [teamText, setTeamText] = useState('Rencontrez une équipe passionnée, engagée et à l\'écoute, composée d\'une direction visionnaire et de formateurs experts dans leur domaine.');
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_about');
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        if (data.heroTitle) setHeroTitle(data.heroTitle);
-        if (data.heroSubtitle) setHeroSubtitle(data.heroSubtitle);
-        if (data.teamMembers && data.teamMembers.length > 0) setTeamMembers(data.teamMembers);
-        if (data.teamText) setTeamText(data.teamText);
-        if (data.localPhotos && data.localPhotos.length > 0) setLocalPhotos(data.localPhotos);
-      } catch {}
-    }
+    getData<Record<string, unknown>>('about', {}).then(data => {
+      if (data.heroTitle) setHeroTitle(data.heroTitle as string);
+      if (data.heroSubtitle) setHeroSubtitle(data.heroSubtitle as string);
+      if (data.teamMembers && (data.teamMembers as TeamMember[]).length > 0) setTeamMembers(data.teamMembers as TeamMember[]);
+      if (data.teamText) setTeamText(data.teamText as string);
+      if (data.localPhotos && (data.localPhotos as LocalPhoto[]).length > 0) setLocalPhotos(data.localPhotos as LocalPhoto[]);
+    });
   }, []);
 
   return (

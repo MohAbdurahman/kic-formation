@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
+import { getData } from '@/lib/db';
 
 interface DashboardStats {
   formations: number;
@@ -30,16 +31,17 @@ export default function AdminDashboard() {
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
 
   useEffect(() => {
-    // Charger les stats depuis localStorage
-    const formations = JSON.parse(localStorage.getItem('kic_formations') || '[]');
-    const events = JSON.parse(localStorage.getItem('kic_calendar') || '[]');
-    const articles = JSON.parse(localStorage.getItem('kic_articles') || '[]');
-
-    setStats({
-      formations: formations.length || 2,
-      events: events.length || 5,
-      articles: articles.length || 3,
-      visitors: 1250, // Simulé
+    Promise.all([
+      getData<{ items: unknown[] }>('formations', { items: [] }),
+      getData<{ items: unknown[] }>('calendar', { items: [] }),
+      getData<{ items: unknown[] }>('articles', { items: [] }),
+    ]).then(([formations, events, articles]) => {
+      setStats({
+        formations: formations.items?.length || 2,
+        events: events.items?.length || 5,
+        articles: articles.items?.length || 3,
+        visitors: 1250,
+      });
     });
 
     // Activité récente simulée

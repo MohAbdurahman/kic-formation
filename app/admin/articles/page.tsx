@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
+import { getData, saveKicData } from '@/lib/db';
 
 interface Article {
   id: string;
@@ -52,11 +53,12 @@ export default function AdminArticlesPage() {
   const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_articles');
-    if (saved) {
-      setArticles(JSON.parse(saved));
-    }
+    getData<{ items: Article[] }>('articles', { items: defaultArticles }).then(data => {
+      setArticles(data.items || defaultArticles);
+    });
+  }, []);
 
+  useEffect(() => {
     if (searchParams.get('action') === 'new') {
       addArticle();
     }
@@ -67,9 +69,12 @@ export default function AdminArticlesPage() {
 
   const saveData = async () => {
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    localStorage.setItem('kic_articles', JSON.stringify(articles));
-    setSaveMessage('Actualités enregistrées !');
+    try {
+      await saveKicData('articles', { items: articles });
+      setSaveMessage('Actualités enregistrées !');
+    } catch {
+      setSaveMessage('Erreur lors de la sauvegarde');
+    }
     setIsSaving(false);
     setTimeout(() => setSaveMessage(''), 3000);
   };

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
+import { getData } from '@/lib/db';
 
 interface Article {
   id: string;
@@ -59,18 +60,10 @@ export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_articles');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        // Filtrer uniquement les articles publiés
-        setArticles(parsed.filter((a: Article) => a.published));
-      } catch {
-        setArticles(defaultArticles.filter(a => a.published));
-      }
-    } else {
-      setArticles(defaultArticles.filter(a => a.published));
-    }
+    getData<{ items: Article[] }>('articles', { items: defaultArticles }).then(data => {
+      const items = data.items || defaultArticles;
+      setArticles(items.filter((a: Article) => a.published));
+    });
   }, []);
 
   const formatDate = (dateStr: string) => {

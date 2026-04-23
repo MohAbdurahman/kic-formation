@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
+import { getData, saveKicData } from '@/lib/db';
 
 interface Testimonial {
   id: string;
@@ -67,17 +68,19 @@ export default function AdminAccueilPage() {
   const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_accueil');
-    if (saved) {
-      try { setData({ ...defaultAccueilData, ...JSON.parse(saved) }); } catch {}
-    }
+    getData<AccueilData>('accueil', defaultAccueilData).then(saved => {
+      setData({ ...defaultAccueilData, ...saved });
+    });
   }, []);
 
   const saveData = async () => {
     setIsSaving(true);
-    await new Promise(r => setTimeout(r, 500));
-    localStorage.setItem('kic_accueil', JSON.stringify(data));
-    setSaveMessage('Page d\'accueil enregistrée !');
+    try {
+      await saveKicData('accueil', data);
+      setSaveMessage('Page d\'accueil enregistrée !');
+    } catch {
+      setSaveMessage('Erreur lors de la sauvegarde');
+    }
     setIsSaving(false);
     setTimeout(() => setSaveMessage(''), 3000);
   };

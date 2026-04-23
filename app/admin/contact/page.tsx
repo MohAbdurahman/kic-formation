@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
+import { getData, saveKicData } from '@/lib/db';
 
 interface ContactData {
   address: string;
@@ -37,17 +38,19 @@ export default function AdminContactPage() {
   const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_contact');
-    if (saved) {
-      try { setData({ ...defaultContactData, ...JSON.parse(saved) }); } catch {}
-    }
+    getData<ContactData>('contact', defaultContactData).then(saved => {
+      setData({ ...defaultContactData, ...saved });
+    });
   }, []);
 
   const saveData = async () => {
     setIsSaving(true);
-    await new Promise(r => setTimeout(r, 500));
-    localStorage.setItem('kic_contact', JSON.stringify(data));
-    setSaveMessage('Coordonnées enregistrées !');
+    try {
+      await saveKicData('contact', data);
+      setSaveMessage('Coordonnées enregistrées !');
+    } catch {
+      setSaveMessage('Erreur lors de la sauvegarde');
+    }
     setIsSaving(false);
     setTimeout(() => setSaveMessage(''), 3000);
   };

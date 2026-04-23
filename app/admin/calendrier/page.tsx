@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
+import { getData, saveKicData } from '@/lib/db';
 
 interface CalendarEvent {
   id: string;
@@ -47,11 +48,12 @@ export default function AdminCalendrierPage() {
   const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_calendar');
-    if (saved) {
-      setEvents(JSON.parse(saved));
-    }
+    getData<{ items: CalendarEvent[] }>('calendar', { items: defaultEvents }).then(data => {
+      setEvents(data.items || defaultEvents);
+    });
+  }, []);
 
+  useEffect(() => {
     if (searchParams.get('action') === 'new') {
       addEvent();
     }
@@ -61,9 +63,12 @@ export default function AdminCalendrierPage() {
 
   const saveData = async () => {
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    localStorage.setItem('kic_calendar', JSON.stringify(events));
-    setSaveMessage('Calendrier enregistré !');
+    try {
+      await saveKicData('calendar', { items: events });
+      setSaveMessage('Calendrier enregistré !');
+    } catch {
+      setSaveMessage('Erreur lors de la sauvegarde');
+    }
     setIsSaving(false);
     setTimeout(() => setSaveMessage(''), 3000);
   };

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
+import { getData, saveKicData } from '@/lib/db';
 
 interface FormationModule {
   title: string;
@@ -73,12 +74,12 @@ export default function AdminFormationsPage() {
   const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_formations');
-    if (saved) {
-      setFormations(JSON.parse(saved));
-    }
+    getData<{ items: Formation[] }>('formations', { items: defaultFormations }).then(data => {
+      setFormations(data.items || defaultFormations);
+    });
+  }, []);
 
-    // Ouvrir modal si action=new
+  useEffect(() => {
     if (searchParams.get('action') === 'new') {
       addFormation();
     }
@@ -89,9 +90,12 @@ export default function AdminFormationsPage() {
 
   const saveData = async () => {
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    localStorage.setItem('kic_formations', JSON.stringify(formations));
-    setSaveMessage('Formations enregistrées !');
+    try {
+      await saveKicData('formations', { items: formations });
+      setSaveMessage('Formations enregistrées !');
+    } catch {
+      setSaveMessage('Erreur lors de la sauvegarde');
+    }
     setIsSaving(false);
     setTimeout(() => setSaveMessage(''), 3000);
   };
