@@ -1,0 +1,3 @@
+module.exports=[8706,a=>{"use strict";async function b(a,b){try{let c=await fetch(`/api/data/${a}`);if(!c.ok)return b;return await c.json()??b}catch{return b}}async function c(a,b){if(!(await fetch(`/api/data/${a}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)})).ok)throw Error("Sauvegarde échouée")}a.s(["getData",()=>b,"saveKicData",()=>c])}];
+
+//# sourceMappingURL=lib_db_ts_942c6417._.js.map

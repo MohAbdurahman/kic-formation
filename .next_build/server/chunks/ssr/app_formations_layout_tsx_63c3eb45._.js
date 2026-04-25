@@ -1,0 +1,3 @@
+module.exports=[59960,a=>{"use strict";var b=a.i(7997);function c({children:a}){return(0,b.jsx)(b.Fragment,{children:a})}a.s(["default",()=>c,"metadata",0,{title:"Catalogue des Formations",description:"Découvrez toutes nos formations continues à Genève : français, anglais, informatique, développement personnel. Inscriptions ouvertes."}])}];
+
+//# sourceMappingURL=app_formations_layout_tsx_63c3eb45._.js.map
