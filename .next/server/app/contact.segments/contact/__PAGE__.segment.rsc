@@ -1,0 +1,7 @@
+1:"$Sreact.fragment"
+2:I[65277,["/_next/static/chunks/18a0d8f26399403a.js","/_next/static/chunks/4913c1055a65a9ca.js"],"default"]
+3:I[5465,["/_next/static/chunks/18a0d8f26399403a.js","/_next/static/chunks/4913c1055a65a9ca.js"],"default"]
+4:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/d2be314c3ece3fbe.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+0:{"buildId":"3lZiE4uP2H4z-Ql_qkkeV","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen bg-gray-50","children":[["$","section",null,{"className":"bg-gradient-to-br from-primary-600 to-primary-800 text-white pt-32 pb-16","children":["$","div",null,{"className":"container","children":[["$","h1",null,{"className":"text-4xl md:text-5xl font-heading font-bold mb-4","children":"Contactez-nous"}],["$","p",null,{"className":"text-xl text-primary-100 max-w-2xl","children":"Une question sur nos formations ? Notre équipe vous répond sous 24h"}]]}]}],["$","section",null,{"className":"section","children":["$","div",null,{"className":"container","children":["$","div",null,{"className":"grid grid-cols-1 lg:grid-cols-5 gap-12","children":[["$","div",null,{"className":"lg:col-span-3","children":["$","$L2",null,{}]}],["$","div",null,{"className":"lg:col-span-2 space-y-6","children":["$","$L3",null,{}]}]]}]}]}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/4913c1055a65a9ca.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"loading":null,"isPartial":false}
+6:null

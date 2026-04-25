@@ -1,0 +1,3 @@
+module.exports=[34048,a=>{"use strict";var b=a.i(87924);function c({children:a,variant:c="niveau",className:d=""}){return(0,b.jsx)("span",{className:`inline-block px-3 py-1 rounded-full text-xs font-medium ${{niveau:"bg-[#25318D]/15 text-[#25318D]",modalite:"bg-green-100 text-green-800",promo:"bg-yellow-100 text-yellow-900",status:"bg-gray-100 text-gray-800"}[c]} ${d}`,children:a})}a.s(["default",()=>c])}];
+
+//# sourceMappingURL=components_ui_Badge_tsx_911a8bd7._.js.map
