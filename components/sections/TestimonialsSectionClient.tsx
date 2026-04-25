@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import TestimonialsCarousel from './TestimonialsCarousel';
+import { getData } from '@/lib/db';
 
 interface Testimonial {
   id: string;
@@ -23,15 +24,11 @@ export default function TestimonialsSectionClient() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_accueil');
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        if (data.testimonials && data.testimonials.length > 0) {
-          setTestimonials(data.testimonials);
-        }
-      } catch {}
-    }
+    getData<{ testimonials?: Testimonial[] }>('accueil', {}).then(data => {
+      if (data.testimonials && data.testimonials.length > 0) {
+        setTestimonials(data.testimonials);
+      }
+    });
   }, []);
 
   return <TestimonialsCarousel testimonials={testimonials} />;

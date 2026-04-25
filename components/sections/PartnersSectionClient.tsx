@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getData } from '@/lib/db';
 
 interface Partner {
   id: string;
@@ -24,15 +25,11 @@ export default function PartnersSectionClient() {
   const [partners, setPartners] = useState<Partner[]>(defaultPartners);
 
   useEffect(() => {
-    const saved = localStorage.getItem('kic_accueil');
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        if (data.partners && data.partners.length > 0) {
-          setPartners(data.partners);
-        }
-      } catch {}
-    }
+    getData<{ partners?: Partner[] }>('accueil', {}).then(data => {
+      if (data.partners && data.partners.length > 0) {
+        setPartners(data.partners);
+      }
+    });
   }, []);
 
   return (
