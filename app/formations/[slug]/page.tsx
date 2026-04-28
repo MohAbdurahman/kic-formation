@@ -1,17 +1,38 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import FormationTabs from '@/components/sections/FormationTabs';
-import { getFormationBySlug } from '@/data/formations';
+import { getData } from '@/lib/db';
+
+interface Formation {
+  id: string; slug: string; category: string; title: string;
+  shortDescription: string; fullDescription: string; objectives: string[];
+  prerequisites: string; program: { title: string; content: string }[];
+  level: string; modality: string; price: number; promoPrice?: number;
+  duration: number; maxParticipants: number;
+  rating?: number; reviewCount?: number;
+  sessions?: { date: string; time: string; availableSeats: number }[];
+}
 
 export default function FormationDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
+  const [formation, setFormation] = useState<Formation | null | undefined>(undefined);
 
-  const formation = getFormationBySlug(slug);
+  useEffect(() => {
+    getData<{ items: Formation[] }>('formations', { items: [] }).then(data => {
+      const found = (data.items || []).find(f => f.slug === slug);
+      setFormation(found ?? null);
+    });
+  }, [slug]);
+
+  if (formation === undefined) {
+    return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full" /></div>;
+  }
 
   if (!formation) {
     return (
@@ -73,14 +94,14 @@ export default function FormationDetailPage() {
                     {[...Array(5)].map((_, i) => (
                       <svg
                         key={i}
-                        className={`w-5 h-5 ${i < Math.floor(formation.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                        className={`w-5 h-5 ${i < Math.floor(formation.rating ?? 5) ? 'text-yellow-400' : 'text-gray-300'}`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     ))}
-                    <span className="ml-2">{formation.rating} ({formation.reviewCount} avis)</span>
+                    <span className="ml-2">{formation.rating ?? 5} ({formation.reviewCount ?? 0} avis)</span>
                   </div>
                   <span>•</span>
                   <span>{formation.duration}h de formation</span>
@@ -144,15 +165,15 @@ export default function FormationDetailPage() {
                     Prochaines sessions
                   </h3>
                   <div className="space-y-3">
-                    {formation.sessions.map((session, index) => (
+                    {formation.sessions && formation.sessions.length > 0 ? formation.sessions.map((session, index) => (
                       <div key={index} className="border border-gray-200 rounded-lg p-3">
                         <p className="font-medium text-gray-900">{session.date}</p>
                         <p className="text-sm text-gray-600">{session.time}</p>
-                        <p className="text-sm text-gray-600">
-                          {session.availableSeats} place(s) disponible(s)
-                        </p>
+                        <p className="text-sm text-gray-600">{session.availableSeats} place(s) disponible(s)</p>
                       </div>
-                    ))}
+                    )) : (
+                      <p className="text-sm text-gray-500">Contactez-nous pour connaître les prochaines sessions.</p>
+                    )}
                   </div>
                 </div>
 
