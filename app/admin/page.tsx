@@ -30,26 +30,38 @@ export default function AdminDashboard() {
 
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
 
-  useEffect(() => {
+  const fetchStats = () => {
     Promise.all([
-      getData<{ items: unknown[] }>('formations', { items: [] }),
-      getData<{ items: unknown[] }>('calendar', { items: [] }),
-      getData<{ items: unknown[] }>('articles', { items: [] }),
+      getData<{ items: { title: string }[] }>('formations', { items: [] }),
+      getData<{ items: { formationTitle: string }[] }>('calendar', { items: [] }),
+      getData<{ items: { title: string; date: string }[] }>('articles', { items: [] }),
     ]).then(([formations, events, articles]) => {
       setStats({
-        formations: formations.items?.length || 2,
-        events: events.items?.length || 5,
-        articles: articles.items?.length || 3,
-        visitors: 1250,
+        formations: formations.items?.length || 0,
+        events: events.items?.length || 0,
+        articles: articles.items?.length || 0,
+        visitors: 0,
       });
-    });
 
-    // Activité récente simulée
-    setRecentActivity([
-      { id: '1', type: 'formation', title: 'Français A1 - Débutant', action: 'Modifiée', date: 'Il y a 2 heures' },
-      { id: '2', type: 'event', title: 'Session Bureautique', action: 'Ajoutée', date: 'Il y a 5 heures' },
-      { id: '3', type: 'article', title: 'Conseils pour apprendre le français', action: 'Publiée', date: 'Hier' },
-    ]);
+      const activity: RecentActivity[] = [
+        ...((formations.items || []).slice(-2).map((f, i) => ({
+          id: `f${i}`, type: 'formation' as const, title: f.title, action: 'Formation', date: '',
+        }))),
+        ...((events.items || []).slice(-2).map((e, i) => ({
+          id: `e${i}`, type: 'event' as const, title: e.formationTitle, action: 'Session', date: '',
+        }))),
+        ...((articles.items || []).slice(-2).map((a, i) => ({
+          id: `a${i}`, type: 'article' as const, title: a.title, action: 'Actualité', date: a.date || '',
+        }))),
+      ];
+      setRecentActivity(activity);
+    });
+  };
+
+  useEffect(() => {
+    fetchStats();
+    const interval = setInterval(fetchStats, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const statCards = [
