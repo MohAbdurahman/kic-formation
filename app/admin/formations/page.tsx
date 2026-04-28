@@ -28,42 +28,7 @@ interface Formation {
   maxParticipants: number;
 }
 
-const defaultFormations: Formation[] = [
-  {
-    id: '1',
-    slug: 'francais-a1-debutant',
-    category: 'Langues',
-    title: 'Français A1 - Débutant',
-    shortDescription: 'Apprenez les bases du français pour communiquer dans la vie quotidienne',
-    fullDescription: 'Cette formation de français niveau A1 est idéale pour les débutants complets.',
-    objectives: ['Comprendre et utiliser des expressions familières', 'Se présenter et présenter les autres'],
-    prerequisites: 'Aucun prérequis',
-    program: [{ title: 'Module 1', content: 'Se présenter' }],
-    level: 'A1',
-    modality: 'Présentiel',
-    price: 850,
-    promoPrice: 720,
-    duration: 40,
-    maxParticipants: 12,
-  },
-  {
-    id: '2',
-    slug: 'bureautique-ecdl',
-    category: 'Informatique',
-    title: 'Bureautique ECDL',
-    shortDescription: 'Maîtrisez Word, Excel, PowerPoint avec certification',
-    fullDescription: 'Formation complète à la bureautique avec certification ECDL.',
-    objectives: ['Maîtriser Word', 'Maîtriser Excel', 'Maîtriser PowerPoint'],
-    prerequisites: 'Connaissances de base en informatique',
-    program: [{ title: 'Word', content: 'Traitement de texte' }],
-    level: 'Intermédiaire',
-    modality: 'Hybride',
-    price: 950,
-    promoPrice: 850,
-    duration: 50,
-    maxParticipants: 10,
-  },
-];
+const defaultFormations: Formation[] = [];
 
 export default function AdminFormationsPage() {
   const searchParams = useSearchParams();

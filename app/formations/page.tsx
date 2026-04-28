@@ -5,7 +5,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { useSearchParams } from 'next/navigation';
-import { allFormations } from '@/data/formations';
+import { getData } from '@/lib/db';
+
+interface Formation {
+  id: string;
+  slug: string;
+  category: string;
+  title: string;
+  shortDescription: string;
+  duration?: number;
+}
 
 // Catégories de formations
 const formationCategories = [
@@ -24,25 +33,8 @@ const formationCategories = [
     bgLight: 'bg-[#FF4040]/10',
     textColor: 'text-[#FF4040]',
     borderColor: 'border-[#FF4040]/20',
-    hasSubCategories: true,
-    subCategories: [
-      {
-        name: 'Français',
-        color: 'text-[#FF4040]',
-        dotColor: 'bg-[#FF4040]',
-        formations: allFormations
-          .filter(f => f.category === 'Français')
-          .map(f => ({ name: f.title, description: f.shortDescription, slug: f.slug })),
-      },
-      {
-        name: 'Anglais',
-        color: 'text-red-600',
-        dotColor: 'bg-red-600',
-        formations: allFormations
-          .filter(f => f.category === 'Anglais')
-          .map(f => ({ name: f.title, description: f.shortDescription, slug: f.slug })),
-      },
-    ],
+    hasSubCategories: false,
+    formations: [],
   },
   {
     id: 'informatique',
@@ -59,21 +51,8 @@ const formationCategories = [
     bgLight: 'bg-[#F0E815]/10',
     textColor: 'text-[#a8a200]',
     borderColor: 'border-[#F0E815]/20',
-    hasSubCategories: true,
-    subCategories: [
-      {
-        name: 'Formations mi-longue (40 heures)',
-        formations: allFormations
-          .filter(f => f.categoryId === 'informatique' && f.duration === 40)
-          .map(f => ({ name: f.title, description: f.shortDescription, slug: f.slug })),
-      },
-      {
-        name: 'Formations courtes (10 heures)',
-        formations: allFormations
-          .filter(f => f.categoryId === 'informatique' && f.duration === 10)
-          .map(f => ({ name: f.title, description: f.shortDescription, slug: f.slug })),
-      },
-    ],
+    hasSubCategories: false,
+    formations: [],
   },
   {
     id: 'accompagnement',
@@ -90,9 +69,7 @@ const formationCategories = [
     bgLight: 'bg-[#BF5EDC]/10',
     textColor: 'text-[#BF5EDC]',
     borderColor: 'border-[#BF5EDC]/20',
-    formations: allFormations
-      .filter(f => f.categoryId === 'accompagnement')
-      .map(f => ({ name: f.title, description: f.shortDescription, slug: f.slug })),
+    formations: [],
   },
   {
     id: 'ateliers',
@@ -109,9 +86,7 @@ const formationCategories = [
     bgLight: 'bg-[#61CB80]/10',
     textColor: 'text-[#2a9e54]',
     borderColor: 'border-[#61CB80]/20',
-    formations: allFormations
-      .filter(f => f.categoryId === 'ateliers')
-      .map(f => ({ name: f.title, description: f.shortDescription, slug: f.slug })),
+    formations: [],
   },
 ];
 
@@ -119,6 +94,20 @@ function FormationsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('categorie');
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(categoryParam);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [categories, setCategories] = useState<any[]>(formationCategories);
+
+  useEffect(() => {
+    getData<{ items: Formation[] }>('formations', { items: [] }).then(data => {
+      const items = data.items || [];
+      setCategories(formationCategories.map(cat => ({
+        ...cat,
+        formations: items
+          .filter(f => f.category === cat.title)
+          .map(f => ({ name: f.title, description: f.shortDescription, slug: f.slug })),
+      })));
+    });
+  }, []);
 
   // Sync with URL parameter
   useEffect(() => {
@@ -126,7 +115,7 @@ function FormationsContent() {
   }, [categoryParam]);
 
   const selectedCategory = selectedCategorySlug
-    ? formationCategories.find(c => c.slug === selectedCategorySlug)
+    ? categories.find(c => c.slug === selectedCategorySlug)
     : null;
 
   return (
@@ -154,7 +143,7 @@ function FormationsContent() {
                   <h2 className="font-semibold">Catégories</h2>
                 </div>
                 <div className="divide-y divide-gray-100">
-                  {formationCategories.map((cat) => (
+                  {categories.map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => {
@@ -179,10 +168,7 @@ function FormationsContent() {
                           {cat.title}
                         </h3>
                         <p className="text-xs text-gray-500">
-                          {cat.hasSubCategories
-                            ? `${cat.subCategories.reduce((acc, sub) => acc + sub.formations.length, 0)} formations`
-                            : `${cat.formations?.length || 0} formations`
-                          }
+                          {`${cat.formations?.length || 0} formations`}
                         </p>
                       </div>
                     </button>
@@ -391,84 +377,13 @@ function FormationsContent() {
                   )}
 
                   {/* Liste des formations de la catégorie */}
-                  {selectedCategory.hasSubCategories ? (
-                    <div className="space-y-6">
-                      {selectedCategory.id === 'langues' ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {selectedCategory.subCategories.map((subCat, subIndex) => {
-                            const sc = subCat as { name: string; color?: string; dotColor?: string; formations: { name: string; description: string; slug: string }[] };
-                            return (
-                            <div key={subIndex} className="bg-white rounded-xl p-6 border-2 border-gray-100">
-                              <h3 className={`text-xl font-heading font-bold mb-4 flex items-center gap-2 ${sc.color ?? ''}`}>
-                                <span className={`w-3 h-3 rounded-full ${sc.dotColor ?? 'bg-gray-400'}`}></span>
-                                {sc.name}
-                              </h3>
-                              <div className="space-y-3">
-                                {sc.formations.map((formation, formIndex) => (
-                                  <Link
-                                    key={formIndex}
-                                    href={`/formations/${formation.slug}`}
-                                    className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer block"
-                                  >
-                                    <div className={`w-2 h-2 rounded-full ${sc.dotColor ?? 'bg-gray-400'} flex-shrink-0 mt-2`}></div>
-                                    <div className="flex-1">
-                                      <h4 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
-                                        {formation.name}
-                                      </h4>
-                                      <p className="text-sm text-gray-500 mt-1">
-                                        {formation.description}
-                                      </p>
-                                    </div>
-                                    <svg className="w-5 h-5 text-gray-300 group-hover:text-primary-600 flex-shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
-                          );})}
-                        </div>
-                      ) : (
-                        <div className="space-y-6">
-                          {selectedCategory.subCategories.map((subCat, subIndex) => (
-                            <div key={subIndex} className="bg-white rounded-xl p-6 border-2 border-gray-100">
-                              <h3 className="text-lg font-heading font-bold mb-4 text-gray-900">
-                                {subCat.name}
-                              </h3>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {subCat.formations.map((formation, formIndex) => (
-                                  <Link
-                                    key={formIndex}
-                                    href={`/formations/${formation.slug}`}
-                                    className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer"
-                                  >
-                                    <div className={`w-6 h-6 rounded-full ${selectedCategory.bgLight} ${selectedCategory.textColor} flex items-center justify-center flex-shrink-0 mt-0.5`}>
-                                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                      </svg>
-                                    </div>
-                                    <div className="flex-1">
-                                      <h4 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
-                                        {formation.name}
-                                      </h4>
-                                      <p className="text-sm text-gray-500 mt-1">
-                                        {formation.description}
-                                      </p>
-                                    </div>
-                                    <svg className="w-5 h-5 text-gray-300 group-hover:text-primary-600 flex-shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                  {selectedCategory.formations && selectedCategory.formations.length === 0 ? (
+                    <div className="bg-white rounded-xl p-8 text-center text-gray-500 border-2 border-gray-100">
+                      Aucune formation disponible dans cette catégorie pour le moment.
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {selectedCategory.formations && selectedCategory.formations.map((formation, index) => (
+                      {selectedCategory.formations && selectedCategory.formations.map((formation: { name: string; description: string; slug: string }, index: number) => (
                         <Link
                           key={index}
                           href={`/formations/${formation.slug}`}
