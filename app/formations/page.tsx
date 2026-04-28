@@ -73,7 +73,7 @@ const formationCategories = [
   },
   {
     id: 'ateliers',
-    title: 'Atelier de prévention',
+    title: 'Ateliers',
     slug: 'ateliers',
     description: 'Des sessions pratiques et interactives pour développer votre bien-être personnel et professionnel. Nos ateliers en petit groupe favorisent l\'échange et la mise en pratique immédiate.',
     longDescription: 'Nos ateliers de prévention sont conçus pour être dynamiques et participatifs. En petit groupe, vous apprenez par la pratique et repartez avec des outils concrets applicables dès le lendemain.',
