@@ -19,30 +19,7 @@ interface Article {
   published: boolean;
 }
 
-const defaultArticles: Article[] = [
-  {
-    id: '1',
-    slug: 'bienvenue-sur-notre-blog',
-    title: 'Bienvenue sur notre blog',
-    excerpt: 'Découvrez nos conseils et actualités sur la formation continue.',
-    content: 'Bienvenue sur le blog de KIC-FORMATIONS ! Nous sommes ravis de vous accueillir sur notre nouvelle plateforme...',
-    category: 'Actualités',
-    author: 'Équipe KIC',
-    date: '2026-01-15',
-    published: true,
-  },
-  {
-    id: '2',
-    slug: 'conseils-apprentissage-langue',
-    title: '5 conseils pour apprendre une langue efficacement',
-    excerpt: 'Découvrez nos meilleures astuces pour progresser rapidement.',
-    content: 'Apprendre une nouvelle langue peut sembler intimidant, mais avec les bonnes méthodes...',
-    category: 'Conseils',
-    author: 'Marie Dupont',
-    date: '2026-01-10',
-    published: true,
-  },
-];
+const defaultArticles: Article[] = [];
 
 export default function AdminArticlesPage() {
   const searchParams = useSearchParams();
@@ -53,8 +30,8 @@ export default function AdminArticlesPage() {
   const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
-    getData<{ items: Article[] }>('articles', { items: defaultArticles }).then(data => {
-      setArticles(data.items || defaultArticles);
+    getData<{ items: Article[] }>('articles', { items: [] }).then(data => {
+      setArticles(data.items || []);
     });
   }, []);
 

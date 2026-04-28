@@ -20,48 +20,14 @@ interface Article {
   published: boolean;
 }
 
-const defaultArticles: Article[] = [
-  {
-    id: '1',
-    slug: '5-astuces-apprendre-francais',
-    title: '5 Astuces pour Apprendre le Français Rapidement',
-    excerpt: 'Découvrez nos meilleures techniques pour progresser rapidement en français et atteindre vos objectifs linguistiques.',
-    content: '',
-    category: 'Conseils',
-    author: 'Marie Durand',
-    date: '2026-01-10',
-    published: true,
-  },
-  {
-    id: '2',
-    slug: 'certification-ecdl-pourquoi',
-    title: 'Pourquoi Obtenir la Certification ECDL ?',
-    excerpt: 'La certification ECDL est reconnue dans toute l\'Europe. Découvrez tous les avantages de cette certification informatique.',
-    content: '',
-    category: 'Informatique',
-    author: 'Pierre Martin',
-    date: '2026-01-08',
-    published: true,
-  },
-  {
-    id: '3',
-    slug: 'gerer-anxiete-examen',
-    title: 'Comment Gérer l\'Anxiété Avant un Examen',
-    excerpt: 'Techniques éprouvées pour gérer le stress et aborder sereinement vos examens et tests de langue.',
-    content: '',
-    category: 'Développement Personnel',
-    author: 'Sophie Legrand',
-    date: '2026-01-05',
-    published: true,
-  },
-];
+const defaultArticles: Article[] = [];
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    getData<{ items: Article[] }>('articles', { items: defaultArticles }).then(data => {
-      const items = data.items || defaultArticles;
+    getData<{ items: Article[] }>('articles', { items: [] }).then(data => {
+      const items = data.items || [];
       setArticles(items.filter((a: Article) => a.published));
     });
   }, []);
