@@ -16,28 +16,7 @@ interface CalendarEvent {
   category: string;
 }
 
-const defaultEvents: CalendarEvent[] = [
-  {
-    id: '1',
-    formationTitle: 'Français A1 - Débutant',
-    date: '2026-03-15',
-    time: '18h00-20h00',
-    duration: '40h',
-    location: 'Genève - Rue des Pâquis 11',
-    availableSeats: 8,
-    category: 'Langues',
-  },
-  {
-    id: '2',
-    formationTitle: 'Bureautique ECDL',
-    date: '2026-03-20',
-    time: '09h00-12h00',
-    duration: '50h',
-    location: 'Genève - Rue des Pâquis 11',
-    availableSeats: 5,
-    category: 'Informatique',
-  },
-];
+const defaultEvents: CalendarEvent[] = [];
 
 export default function AdminCalendrierPage() {
   const searchParams = useSearchParams();
@@ -48,8 +27,8 @@ export default function AdminCalendrierPage() {
   const [saveMessage, setSaveMessage] = useState('');
 
   useEffect(() => {
-    getData<{ items: CalendarEvent[] }>('calendar', { items: defaultEvents }).then(data => {
-      setEvents(data.items || defaultEvents);
+    getData<{ items: CalendarEvent[] }>('calendar', { items: [] }).then(data => {
+      setEvents(data.items || []);
     });
   }, []);
 
