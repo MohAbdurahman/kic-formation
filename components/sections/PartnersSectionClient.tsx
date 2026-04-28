@@ -8,18 +8,7 @@ interface Partner {
   name: string;
 }
 
-const defaultPartners: Partner[] = [
-  { id: '1', name: 'Rolex' },
-  { id: '2', name: 'Nestlé' },
-  { id: '3', name: 'UBS' },
-  { id: '4', name: 'Credit Suisse' },
-  { id: '5', name: 'Swisscom' },
-  { id: '6', name: 'Novartis' },
-  { id: '7', name: 'ABB' },
-  { id: '8', name: 'Zurich Insurance' },
-  { id: '9', name: 'Migros' },
-  { id: '10', name: 'Coop' },
-];
+const defaultPartners: Partner[] = [];
 
 export default function PartnersSectionClient() {
   const [partners, setPartners] = useState<Partner[]>(defaultPartners);
